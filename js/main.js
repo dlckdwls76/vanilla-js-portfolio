@@ -64,7 +64,7 @@ function toggleTheme() {
 function renderMenu() {
   elements.menu.classList.toggle("active", state.menuOpen);
   elements.menuButton.setAttribute("aria-expanded", String(state.menuOpen));
-  elements.menuButton.textContent = state.menuOpen ? "닫기" : "메뉴";
+  elements.menuButton.textContent = state.menuOpen ? "× 닫기" : "☰ 메뉴";
 }
 
 function closeMenu() {
