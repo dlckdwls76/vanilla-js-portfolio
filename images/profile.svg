@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="320" height="320" viewBox="0 0 320 320" role="img" aria-labelledby="title">
+  <title id="title">이창진의 CJ 이니셜 프로필</title>
+  <rect width="320" height="320" rx="16" fill="#193c34"/>
+  <circle cx="260" cy="55" r="92" fill="#244e42"/>
+  <circle cx="40" cy="290" r="112" fill="#244e42"/>
+  <path d="M35 55h38M35 55v38M285 265h-38M285 265v-38" stroke="#c6ed84" stroke-width="3" fill="none"/>
+  <text x="160" y="196" text-anchor="middle" font-family="Arial,sans-serif" font-size="108" font-weight="700" fill="#e6f4d8">CJ<tspan fill="#c6ed84">.</tspan></text>
+</svg>
