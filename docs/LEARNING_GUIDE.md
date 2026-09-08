@@ -69,7 +69,21 @@ items.map(createProjectCard).join("");
 
 화살표 함수는 짧은 콜백을 표현할 때 사용합니다. 일반 함수와 `this` 처리 등이 다르므로 모든 함수를 기계적으로 바꾸지는 않습니다.
 
-**선택 실습:** `filter`로 언어가 JavaScript인 저장소만 선택한 뒤 `map`으로 렌더링해보세요. 필터는 현재 기본 구현에 포함하지 않았습니다.
+### 언어 필터: 선택한 뒤 변환하기
+
+프로젝트 섹션에서 언어 버튼을 누르고 `state.projects.language` → `renderProjects()` 순서로 읽어보세요.
+
+```js
+const filteredItems = items.filter((project) =>
+  language === "all" || (project.language || "언어 미지정") === language
+);
+```
+
+`filter`는 조건이 참인 저장소만 담은 새 배열을 만듭니다. 전체를 선택하면 모든 항목이 통과합니다. `filteredItems.map(createProjectCard).join("")`은 선택된 저장소를 카드 HTML로 바꿉니다. 원본 `items`는 남아 있어 전체 버튼으로 복원할 수 있습니다.
+
+**설명 순서:** 버튼 클릭 → 필터 상태 변경 → `filter`로 저장소 선택 → `map`으로 카드 변환 → 화면 갱신. 클릭할 때 API를 다시 요청하지 않습니다. 결과 0건은 요청 실패와 다르므로 재시도 대신 다른 언어를 선택하도록 안내합니다.
+
+**실습:** JavaScript → CSS → 전체를 눌러 개수와 카드 변화를 확인하세요. 선택 버튼의 `aria-pressed`가 바뀌는지, 키보드 Enter로도 동작하는지 확인하세요.
 
 ## 6. 비동기 요청을 기다리는 동안
 

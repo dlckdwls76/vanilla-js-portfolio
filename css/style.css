@@ -103,6 +103,10 @@ p { color: var(--muted); }
 .project-card h3 a:hover { text-decoration: underline; }
 .project-card p { margin: 0; overflow-wrap: anywhere; }
 .project-meta { display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; color: var(--muted); font-size: 0.875rem; margin-top: auto; padding-top: 0.8rem; border-top: 1px solid var(--line); }
+.project-filters { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1.2rem; }
+.filter-button { min-height: 44px; padding: 0.45rem 1rem; border: 1px solid var(--line); border-radius: 2rem; background: var(--card); color: var(--text); transition: background-color 180ms, border-color 180ms; }
+.filter-button:hover { border-color: var(--accent); }
+.filter-button[aria-pressed="true"] { background: var(--accent); color: var(--bg); border-color: var(--accent); font-weight: 700; }
 .status-message:not(:empty) { padding: 1.5rem; border: 1px dashed var(--line); border-radius: var(--radius); margin-bottom: 1rem; }
 .status-message.error { color: var(--error); }
 .form-notice { font-size: 0.875rem; }

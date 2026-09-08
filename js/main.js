@@ -14,7 +14,7 @@ const SETTINGS = {
 const state = {
   theme: "light",
   menuOpen: false,
-  projects: { status: "idle", items: [], error: "" },
+  projects: { status: "idle", items: [], error: "", language: "all" },
   form: { errors: {}, touched: {}, submitted: false, success: false },
 };
 
@@ -26,6 +26,7 @@ const elements = {
   topButton: document.querySelector("#scroll-top"),
   projectList: document.querySelector("#project-list"),
   projectStatus: document.querySelector("#project-status"),
+  projectFilters: document.querySelector("#project-filters"),
   retryButton: document.querySelector("#retry-projects"),
   form: document.querySelector("#contact-form"),
   formStatus: document.querySelector("#form-status"),
@@ -120,12 +121,31 @@ function createProjectCard(project) {
     </article>`;
 }
 
+// 기본 언어와 실제 저장소의 언어를 합친다. Set은 중복을 제거한다.
+function renderProjectFilters() {
+  const languages = [...new Set([
+    "JavaScript", "HTML", "CSS", "Python",
+    ...state.projects.items.map(({ language }) => language || "언어 미지정"),
+  ])];
+  elements.projectFilters.innerHTML = ["all", ...languages].map((language) => `
+    <button class="filter-button" type="button" data-language="${escapeHTML(language)}"
+      aria-controls="project-list" aria-pressed="${language === state.projects.language}">
+      ${language === "all" ? "전체" : escapeHTML(language)}
+    </button>`).join("");
+}
+
 function renderProjects() {
-  const { status, items, error } = state.projects;
+  const { status, items, error, language } = state.projects;
+  // filter는 원본 items를 바꾸지 않고 조건에 맞는 새 배열을 반환한다.
+  const filteredItems = items.filter((project) =>
+    language === "all" || (project.language || "언어 미지정") === language
+  );
   const messages = {
     idle: "",
     loading: "프로젝트를 불러오는 중...",
-    success: `${items.length}개의 공개 저장소를 불러왔습니다.`,
+    success: filteredItems.length > 0
+      ? `${language === "all" ? "전체" : language}: ${items.length}개 중 ${filteredItems.length}개의 저장소를 표시합니다.`
+      : `${language}에 해당하는 프로젝트가 없습니다. 전체 또는 다른 언어를 선택해주세요.`,
     empty: "표시할 프로젝트가 없습니다.",
     error: `프로젝트를 불러올 수 없습니다. ${error}`,
   };
@@ -133,12 +153,17 @@ function renderProjects() {
   elements.projectStatus.classList.toggle("error", status === "error");
   elements.projectList.setAttribute("aria-busy", String(status === "loading"));
   elements.retryButton.hidden = status !== "error";
-  elements.projectList.innerHTML = status === "success" ? items.map(createProjectCard).join("") : "";
+  elements.projectFilters.hidden = status !== "success";
+  // 버튼을 다시 만들지 않고 선택 표시만 바꿔 키보드 초점을 유지한다.
+  elements.projectFilters.querySelectorAll("button").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.language === language));
+  });
+  elements.projectList.innerHTML = status === "success" ? filteredItems.map(createProjectCard).join("") : "";
 }
 
 async function loadProjects() {
   if (state.projects.status === "loading") return;
-  state.projects = { status: "loading", items: [], error: "" };
+  state.projects = { status: "loading", items: [], error: "", language: "all" };
   renderProjects();
 
   const controller = new AbortController();
@@ -160,6 +185,7 @@ async function loadProjects() {
     }
     state.projects.items = projects;
     state.projects.status = projects.length > 0 ? "success" : "empty";
+    renderProjectFilters();
   } catch (error) {
     state.projects.status = "error";
     state.projects.error = error.name === "AbortError"
@@ -237,6 +263,13 @@ elements.retryButton.addEventListener("click", () => {
   loadProjects();
 });
 elements.form.addEventListener("submit", handleSubmit);
+// 필터 클릭 → 상태 변경 → filter로 선택 → map으로 카드 렌더링.
+elements.projectFilters.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-language]");
+  if (!button || !elements.projectFilters.contains(button)) return;
+  state.projects.language = button.dataset.language;
+  renderProjects();
+});
 formFields.forEach((field) => {
   field.addEventListener("input", () => {
     state.form.touched[field.name] = true;

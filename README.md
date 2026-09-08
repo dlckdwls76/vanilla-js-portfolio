@@ -73,6 +73,7 @@ vanilla-js-portfolio/
 | 6개 필수 섹션 | `index.html` | Hero, About, Skills, Projects, Contact, Footer |
 | 메뉴 가로 배치 | `.navigation` | Flexbox로 한 방향 정렬 |
 | 프로젝트 카드 | `.projects-grid` | Grid의 `auto-fit` + `minmax`로 열 수 조절 |
+| 언어별 프로젝트 필터 | `state.projects.language`, `renderProjects()` | `items.filter(...)` → `map(...)`, 원본 배열 유지 |
 | 햄버거 메뉴 | `renderMenu()` | 상태와 `active`, `aria-expanded` 동기화 |
 | 부드러운 이동 | `html`의 `scroll-behavior` | 앵커 링크의 기본 동작 활용 |
 | 탐색 배경 / 맨 위 버튼 | `renderScroll()` | 스크롤 위치에 따라 표시 변경 |
@@ -102,6 +103,7 @@ vanilla-js-portfolio/
 API 요청  → loading / success / empty / error → renderProjects() → 목록·안내 변경
 폼 입력   → errors / touched 변경 → renderForm() → 오류 표시·숨김
 메뉴 클릭 → state.menuOpen 변경 → renderMenu() → 메뉴와 접근성 상태 변경
+필터 클릭 → state.projects.language 변경 → items.filter(...) → map(...) → 카드 변경
 ```
 
 `state.theme`은 **기억하는 값**, `renderTheme()`은 **값을 화면에 옮기는 함수**, `localStorage`는 **새로고침 후에도 선택을 기억하는 저장소**입니다. 역할을 구분해서 설명하는 것이 목표입니다.
@@ -141,7 +143,9 @@ GET https://api.github.com/users/dlckdwls76/repos?sort=updated&direction=desc&pe
 
 기본 테마는 라이트입니다. 저장이 차단되어도 현재 탭에서 테마를 바꿀 수 있지만 새로고침 후 저장값 유지가 제한됩니다.
 
-선택 과제인 언어 필터, 타이핑 효과, 실제 이메일 전송, 시스템 테마 자동 감지는 포함하지 않았습니다. 필수 흐름을 먼저 설명한 뒤 확장할 연습으로 남겼습니다.
+언어별 프로젝트 필터를 구현했습니다. **전체 / JavaScript / HTML / CSS / Python**과 실제 응답의 추가 언어를 버튼으로 제공합니다. 언어 정보가 없는 저장소는 **언어 미지정**으로 분류합니다. 가져온 최대 12개 안에서만 필터링하며 추가 API 요청은 하지 않습니다. 결과가 없으면 안내를 표시하고, 전체를 누르면 원래 목록으로 돌아갑니다. 새로고침·API 재요청 시 선택은 전체로 초기화됩니다.
+
+선택 과제 중 타이핑 효과, 실제 이메일 전송, 시스템 테마 자동 감지는 포함하지 않았습니다.
 
 ## 8. 화면 미리보기
 
